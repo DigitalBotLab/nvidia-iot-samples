@@ -272,6 +272,27 @@ and then run one of the following
 
 When the IoT velocity value changes the extension will animate the rollers (`LiveRoller` class) as well as the cube (`LiveCube` class).
 
+## Using Azure Digital Twins Live Data
+
+You can also connect to an Azure Digital Twins Instance and map objects from your Live Digital Twin to objects in Omniverse.
+
+Consuming live data connects to an Azure Event Hub to recieve Digital Twin property updates.
+
+
+## Using Azure Digital Twins Time Series Data
+
+You can also connect to an Azure Digital Twins Instance and map objects from your Digital Twin Time-Series Data to objects in Omniverse.
+
+Consuming time-series data connects to a Azure Data Explorer Cluster to recieve to property updates.
+
+## Use the Digital Twins SDK to model your business rules
+
+The Digital Twins SDK introduces a high-level concept of Behaviour Mapping.  Using the SDK, you can develop custom behaviours that model your Digital Twin's property changes with different types of Omniverse actions.
+
+The SDK give you the tools to model Property Changes, Position Changes, Physics or Animation behaviours into your Omniverse objects.
+
+ [Find out more about the Digital Twins SDK](https://digitaltwinsdk.com)
+
 ## Sharing Your Extensions
 
 This folder is ready to be pushed to any git repository. Once pushed direct link to a git repository can be added to *Omniverse Kit* extension search paths.
