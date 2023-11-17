@@ -4,16 +4,17 @@ import carb
 import logging
 
 # Sample Implementation of a DigitalTwin SDK property behaviour
-# Receives Telemetry updates and converts it into a property change with custom business logic
+# Receives Telemetry updates and converts it into mulitple property changes with custom business logic
 # Office Building Sample, Convert Temperature to a Light Color (R, G, B) value
+# Updates the input:color r,g,b values based on a temperature
 class RoomTemperatureBehavior(object):
 
-    def __init__(self, live_layer, dtId, prim_path, default_temp):
-        self.dtId = dtId
-        self.usdPrimPath = prim_path
-        self.live_layer = live_layer
-        self.temperature = default_temp
-        self.isDirty = True
+    def __init__(self, live_layer, dtId, prim_path, temperature):
+        self._dtId = dtId
+        self._usdPrimPath = prim_path
+        self._live_layer = live_layer
+        self._temperature = temperature
+        self._isDirty = True
 
     def _get_light_color_for_temperature(self, temp):
 
@@ -65,16 +66,20 @@ class RoomTemperatureBehavior(object):
 
         return color_r, color_g,  color_b
 
+    # Private Handler Method
     def _setProperty(self, temperature):
         if (self._temperature != temperature):
             self._temperature = temperature
             self._isDirty = True
+            self._handleTemperatureChange(self)
 
+    # Interface Method of IPropertyBehaviour
     def telemetryUpdate(self, key, value):
         if (key == '/Temperature'):
             self._setProperty(value)
 
-    def handleTemperatureChange(self, stage):
+
+    def _handleTemperatureChange(self):
 
         if (self._isDirty):
             r, g, b = self._get_light_color_for_temperature(self._temperature)
@@ -83,10 +88,17 @@ class RoomTemperatureBehavior(object):
             #carb.log_info("[digital.twin.starter.ext] Update Prim Path: {}".format(prim_path))
             #self._logger.info("changing property..." + self._templightpath + " " + str(r) + " " + str(g) + " " + str(b))
 
-            omni.kit.commands.execute(
-                "ChangeProperty",
-                prop_path=Sdf.Path(prim_path.AppendProperty("inputs:color")),
-                value=Gf.Vec3d(r, g, b),
-                prev=Gf.Vec3d(r, g, b)
-            )
+            attribute = self._live_layer.GetAttributeAtPath(f"{prim_path}.inputs:color")
+            if not attribute:
+                raise Exception(f"Could not find attribute {prim_path}.inputs:color")
+
+            with Sdf.ChangeBlock():
+                attribute.default = Gf.Vec3d(r, g, b)
+
+            # omni.kit.commands.execute(
+            #     "ChangeProperty",
+            #     prop_path=Sdf.Path(prim_path.AppendProperty("inputs:color")),
+            #     value=Gf.Vec3d(r, g, b),
+            #     prev=Gf.Vec3d(r, g, b)
+            # )
             self._isDirty = False
