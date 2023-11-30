@@ -174,6 +174,46 @@ If you open `omniverse://localhost/Projects/IoT/Samples/HeadlessApp/ConveyorBelt
 
 Selecting the `/iot/A08_PR_NVD_01` Prim in the `Stage` panel and toggling the `Raw USD Properties` in the `Property` panel will provide real-time updates from the data being pushed by the python application
 
+
+# Azure Digital Twins Ingest Application
+
+The Azure Digital Twins sample lets you connect to an Azure Digital Twins Instance and create a twin graph based model inside of your target USD file.  Data can be ingested from a live Event Hub connection or a Time Series dataset.
+
+You first need an Azure Digital Twins instance, model and supporting infrastrcuture.
+
+See the tutorials at [DigitalTwinStarter.com](https://www.digitaltwinstarter.com/lesson/setup-a-digital-twins-environment) to get started with the needed Azure prerequisites.
+
+
+To execute the application run the the following:
+```
+> python source/ingest_app_adt/run_app.py -u <user name> -p <password> -adt <your-digital-twins-endpoint> -evh <your-event-hub-connection-string>
+```
+
+You should see output resembling:
+```
+TBD
+```
+
+The ADT ingest application can be found in the `source/ingest_app_adt` folder. It will perform the following:
+- Initialize the stage
+    - Open a connection to the `localhost` instance of Nucleus.
+    - Copy `content/AzureDigitalTwins.usd` to `omniverse://localhost/Projects/ADT/Samples/HeadlessApp/` if it does not already exist.
+    - Add a `.live` layer to the stage if it does not already exist.
+    - Create a `Prim` in the `.live` layer at path `/adt` and populate it with attributes that correspond to your Azure Digtal Twin graph.
+- Playback in real-time
+    - Connect to Event Hub and listen for events
+- Consume ADT Telemetry data
+    - Update the Prim attributes corresponding to the events received.
+
+
+If you open `omniverse://localhost/Projects/ADT/Samples/HeadlessApp/AzureDigitalTwins.usd` in `'USD Composer'` or `Kit` then you should see the following:
+
+![open settings](content/docs/stage_001.png?raw=true)
+
+Selecting the `/adt` Prim in the `Stage` panel and toggling the `Raw USD Properties` in the `Property` panel will provide real-time updates from the data being pushed by the python application
+
+
+
 # Action Graph
 
 The `ConveyorBelt_A08_PR_NVD_01.usd` contains a simple `ActionGraph` that reads, formats, and displays an attribute from the IoT Prim in the ViewPort.
